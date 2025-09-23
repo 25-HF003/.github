@@ -3,7 +3,7 @@
 
 <div align="center">
 
-<img width="1280" height="720" alt="썸네일 이미지" src="https://github.com/user-attachments/assets/b2b5f770-3f6a-4bf8-ab41-9323d48ac4cc" />
+<img width="1280" height="720" alt="썸네일 이미지" src="https://github.com/user-attachments/assets/b1d216df-b4ff-4822-98ec-8ac7c7ac4d7e" />
 
 `#딥페이크 탐지` `#적대적 노이즈 삽입` `#워터마크 삽입/탐지` <br /> <br />
 클릭 한 번으로 영상의 진실을 찾고 콘텐츠를 지키는 **통합 보안 솔루션** 'DeepTruth'입니다. 
