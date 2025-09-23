@@ -10,6 +10,15 @@
 
 ---
 
+### Repository
+> Client: https://github.com/25-HF003/front-end <br />
+> Spring Boot server: https://github.com/25-HF003/back-end <br/>
+> Deepfake server: https://github.com/25-HF003/deepFake <br />
+> Adversarial-Noise server: https://github.com/25-HF003/Adversarial-Noise <br />
+> Watermark server: https://github.com/25-HF003/Watermark <br />
+
+---
+
 ## **💡1. 프로젝트 개요**
 
 
@@ -55,3 +64,19 @@
 | **강수정** | **김보민** | **서지혜(팀장)** | **여강휘** | 
 | [@kangsujung](https://github.com/kangsujung) | [@fsdffds](https://github.com/fsdffds)  | [@Jihye0623](https://github.com/jihye0623) | [@YO1231](https://github.com/YO1231) |
 | • FrontEnd <br> • AI | • FrontEnd <br> • AI | • BackEnd <br> • AI |• BackEnd <br> • AI |
+
+---
+## **💡3. 시스템 구성도**
+- 서비스 구성도
+<img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/78a8aae8-a3c3-418e-bd3e-0685a59d9413" />
+
+- 엔티티 관계도
+<img width="500" height="500" alt="스크린샷(8)" src="https://github.com/user-attachments/assets/779c8c02-8341-45d1-a807-16c7cc6812d2" />
+
+
+---
+## **💡4. 작품 소개영상*
+
+
+---
+## **💡5. 핵심 소스코드**
