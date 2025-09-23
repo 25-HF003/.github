@@ -48,12 +48,12 @@
 - 활용방안 디지털 미디어 신뢰성·안전성 강화, 사법 절차 법적 대응 지원
 
 **1-6. 기술 스택**
-- 프론트엔드 : React, Next.js, Tailwind CSS
-- 백엔드 : Java, Spring Boot
-- AI/ML : PyTorch, Flask
-- 데이터베이스 : MySQL
-- 클라우드 : AWS
-- 배포 및 관리 : Docker, Kubernetes
+- 프론트엔드 : <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=Next.js&logoColor=white"/> <img src="https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=CSS3&logoColor=white">
+- 백엔드 : <img src="https://img.shields.io/badge/java-007396?style=flat-square&logo=OpenJDK&logoColor=white"> <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat-square&logo=springboot&logoColor=black"/>
+- AI/ML : <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=Python&logoColor=white"> <img src="https://img.shields.io/badge/Flask-000000?style=flat-square&logo=Flask&logoColor=white">
+- 데이터베이스 : <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white"> 
+- 클라우드 : <img src="https://img.shields.io/badge/Amazon AWS-232F3E?style=flat-square&logo=amazonaws&logoColor=white"/>
+- 배포 및 관리 : <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=flat-square&logo=docker&logoColor=white"> <img src="https://img.shields.io/badge/Kubernetes-326CE5?style=flat-square&logo=Kubernetes&logoColor=white"> 
 
 ---
 
@@ -76,7 +76,7 @@
 
 ---
 ## **💡4. 작품 소개영상**
-
+[![Video Label](http://img.youtube.com/vi/6XYoLJTWHXI/0.jpg)](https://youtu.be/6XYoLJTWHXI?si=1JbJn2mcm2SDC6fU)
 
 ---
 ## **💡5. 핵심 소스코드**
