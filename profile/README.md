@@ -3,7 +3,7 @@
 
 <div align="center">
 
-<img width="1280" height="720" alt="썸네일 이미지" src="https://github.com/user-attachments/assets/b1d216df-b4ff-4822-98ec-8ac7c7ac4d7e" />
+<img width="1280" height="720" alt="썸네일 이미지" src="https://github.com/user-attachments/assets/598821b5-73a5-45fa-965e-958208b6d076" />
 
 `#딥페이크 탐지` `#적대적 노이즈 삽입` `#워터마크 삽입/탐지` <br /> <br />
 클릭 한 번으로 영상의 진실을 찾고 콘텐츠를 지키는 **통합 보안 솔루션** 'DeepTruth'입니다. 
@@ -50,7 +50,7 @@
 - 활용방안 디지털 미디어 신뢰성·안전성 강화, 사법 절차 법적 대응 지원
 
 **1-6. 기술 스택**
-- 프론트엔드 : <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=Next.js&logoColor=white"/> <img src="https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=CSS3&logoColor=white">
+- 프론트엔드 : <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=Next.js&logoColor=white"/> <img src="https://img.shields.io/badge/typescript-%23007ACC.svg?style=flat-square&logo=typescript&logoColor=white"> <img src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=flat-square&logo=tailwind-css&logoColor=white">
 - 백엔드 : <img src="https://img.shields.io/badge/java-007396?style=flat-square&logo=OpenJDK&logoColor=white"> <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat-square&logo=springboot&logoColor=black"/>
 - AI/ML : <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=Python&logoColor=white"> <img src="https://img.shields.io/badge/Flask-000000?style=flat-square&logo=Flask&logoColor=white">
 - 데이터베이스 : <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white"> 
