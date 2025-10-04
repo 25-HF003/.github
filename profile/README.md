@@ -28,8 +28,6 @@
 - 프로젝트 명 : DeepTruth
 - 프로젝트 정의 : 불법적인 딥페이크 탐지 및 생성 방지를 위한 AI 기반 영상 분석 솔루션
 
-
-
 **1-2. 개발 배경 및 필요성**
 - 최근 딥페이크 기술의 악용 사례가 늘어 사회적 문제로 대두되고 있습니다. 정치인 가짜 연설 영상과 유명인 합성 음란물 유포는 물론, AI의 무단 학습으로 원작자의 저작권 침해 문제까지 발생하고 있습니다. 이에 본 프로젝트는 AI 기반 딥페이크 탐지 시스템을 개발합니다. 또한 적대적 노이즈와 보이지 않는 워터마크 기술을 적용하여 딥페이크 탐지 및 예방 기능을 강화하는 것을 목표로 합니다.
 
@@ -46,8 +44,8 @@
 - 워터마크 삽입:  파일을 받아 워터마크를 삽입/탐지 가능
 
 **1-5. 기대 효과 및 활용 분야**
-- 기대효과: 사회·정치적 안정성 확보, 창작자 지적 재산권 보호, 차세대 AI 보안 기술 표준 정립.
-- 활용방안 디지털 미디어 신뢰성·안전성 강화, 사법 절차 법적 대응 지원
+- 기대효과: 사회·정치적 안정성 확보, 창작자 지적 재산권 보호, 차세대 AI 보안 기술 표준 정립
+- 활용방안: 사법 절차 법적 대응 지원, 언론·미디어의 보도 영상 무결성 검증, 디지털 작품 저작권 보호
 
 **1-6. 기술 스택**
 - 프론트엔드 : <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=Next.js&logoColor=white"/> <img src="https://img.shields.io/badge/typescript-%23007ACC.svg?style=flat-square&logo=typescript&logoColor=white"> <img src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=flat-square&logo=tailwind-css&logoColor=white">
