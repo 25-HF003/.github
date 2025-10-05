@@ -53,7 +53,7 @@
 - AI/ML : <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=Python&logoColor=white"> <img src="https://img.shields.io/badge/Flask-000000?style=flat-square&logo=Flask&logoColor=white">
 - 데이터베이스 : <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white"> 
 - 클라우드 :  <img src="https://img.shields.io/badge/Amazon AWS-FF9900?style=flat-square&logo=amazonec2&logoColor=white"/>
-- 배포 및 관리 : <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=flat-square&logo=docker&logoColor=white"> <img src="https://img.shields.io/badge/Kubernetes-326CE5?style=flat-square&logo=Kubernetes&logoColor=white"> 
+- 배포 및 관리 : <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=flat-square&logo=docker&logoColor=white"> 
 
 ---
 
@@ -80,3 +80,227 @@
 
 ---
 ## **💡5. 핵심 소스코드**
+
+### **:boom:딥페이크 탐지 기능**
+#### 1) DNN으로 얼굴 검출을 시도하고, 실패하면 이미지를 리사이즈하여 재시도하거나 dlib 탐지기로 전환하는 등 여러 단계의 폴백(fallback)을 통해 안정적으로 얼굴을 찾아내는 함수입니다.
+
+```python
+def robust_detect(frame, *, detector="dnn", dnn_conf=0.30, resize_long=720, max_boxes=5):
+    H, W = frame.shape[:2]
+    # 1차 DNN
+    try:
+        bboxes = detect_face_bboxes(frame, detector="dnn", dnn_conf=dnn_conf, max_boxes=max_boxes)
+    except Exception as e:
+        print("[ERR] dnn first pass:", repr(e), flush=True); 
+        bboxes = []
+
+    # 리사이즈 후 재시도
+    if not bboxes:
+        long_side = resize_long or 720
+        scale = float(long_side) / float(max(H, W))
+        fr = cv2.resize(frame, (int(W*scale), int(H*scale)), interpolation=cv2.INTER_AREA) if scale < 1.0 else frame
+        try:
+            b2 = detect_face_bboxes(fr, detector="dnn", dnn_conf=0.25, max_boxes=max_boxes)
+        except Exception as e:
+            print("[ERR] dnn resized pass:", repr(e), flush=True); 
+            b2 = []
+        if b2:
+            inv = (1.0/scale) if scale>0 else 1.0
+            bboxes = [(int(x1*inv), int(y1*inv), int(x2*inv), int(y2*inv), conf) for (x1,y1,x2,y2,conf) in b2]
+    
+    # 폴백
+    if not bboxes and detector != "dlib":
+        try:
+            fb = detect_face_bboxes(frame, detector="dlib", max_boxes=max_boxes) or []
+            if fb:
+                print("[DBG] fallback dlib hit", flush=True)
+            bboxes = fb
+        except Exception as e:
+            print("[ERR] dlib fallback:", repr(e), flush=True); 
+    return bboxes
+```
+
+#### 2) 동영상에서 프레임을 균등하게 샘플링하여 딥페이크 여부를 추론하고, 지수 이동 평균(EMA)으로 신뢰도 점수를 보정하여 최종 결과를 계산하는 기능을 수행합니다.
+
+```python
+# 균등 샘플링
+step = max(1, num_frames // max(1, sample_count))
+target_indices = set([min(i*step, num_frames-1) for i in range(max(1, sample_count))])
+
+ema = None
+per_frame_conf = []
+raw_conf_for_vote = []
+results = []
+
+while cap.isOpened():
+    ret, frame = cap.read()
+    if not ret or frame is None:
+        break
+
+    if frame_idx in target_indices:
+        # (정밀/기본 모드에 따라 얼굴 검출/전처리/추론)
+        # ...
+        # 추론 후 EMA 적용
+        if ema is None:
+            ema = conf_i  # 또는 conf
+        else:
+            ema = 0.5*conf_i + 0.5*ema
+        conf_s = float(ema)
+
+        raw_conf_for_vote.append((conf_i, q, l))
+        per_frame_conf.append(conf_s)
+        results.append({'pred': 1 if conf_s>=0.5 else 0, 'confidence': conf_s})
+        # ...
+    frame_idx += 1
+
+```
+<br/>
+
+### **:boom:적대적 노이즈 삽입 기능**
+
+```python
+def fgsm_attack_with_blur(image_tensor, base_epsilon=0.015, base_sigma=0.4, mode='auto', level=2):
+    image_tensor = image_tensor.clone().unsqueeze(0).requires_grad_(True)
+    
+    result = classify_with_art_model(image_tensor)
+    if result[0] is None:  # 분류 실패 시
+        raise ValueError("원본 이미지 분류에 실패했습니다.")
+    original_class, conf, original_pred = result
+    
+    # 모드별 epsilon 결정
+    if mode == 'precision':
+        # 정밀 모드: 자동 모드의 각 단계와 동일한 epsilon 사용
+        epsilon_levels = {
+            1: base_epsilon,        # 기본 (1.0배)
+            2: base_epsilon * 1.5,  # 중간 (1.5배)
+            3: base_epsilon * 2.5,  # 강함 (2.5배)
+            4: base_epsilon * 4.0   # 매우 강함 (4.0배)
+        }
+        eps = epsilon_levels.get(level, base_epsilon)
+        sigma = base_sigma  # 고정
+        auto_reason = None
+        
+    else:  # mode == 'auto'
+        # 자동 모드: 신뢰도 기반 조정 (기존 로직)
+        if conf > 0.99:
+            eps = base_epsilon * 4.0
+            sigma = base_sigma * 0.3
+            auto_reason = "very_high_confidence"
+        elif conf > 0.95:
+            eps = base_epsilon * 2.5
+            sigma = base_sigma * 0.5
+            auto_reason = "high_confidence"
+        elif conf > 0.9:
+            eps = base_epsilon * 1.5
+            sigma = base_sigma
+            auto_reason = "medium_confidence"
+        else:
+            eps = base_epsilon
+            sigma = base_sigma
+            auto_reason = "low_confidence"
+    
+    # FGSM 공격
+    try:
+        # gradient 계산
+        image_pil = transforms.ToPILImage()(image_tensor.squeeze().clamp(0, 1))
+        inputs = art_processor(images=image_pil, return_tensors="pt")
+        inputs['pixel_values'].requires_grad_(True)
+        
+        outputs = art_model(**inputs)
+        target = torch.tensor([original_pred])
+        loss = F.cross_entropy(outputs.logits, target)
+        
+        # Gradient 기반 perturbation
+        loss.backward()
+        
+        if inputs['pixel_values'].grad is not None:
+            perturbation = eps * inputs['pixel_values'].grad.sign()
+            # 크기 맞춤
+            if perturbation.shape != image_tensor.shape:
+                perturbation = F.interpolate(perturbation, size=image_tensor.shape[2:], mode='bilinear')
+            adv_image = image_tensor + perturbation
+            print("[DEBUG] Gradient 기반 FGSM 적용")
+        else:
+            raise Exception("Gradient 계산 실패")
+            
+    except Exception as e:
+        print(f"[WARN] 예술 모델 gradient 실패, fallback 사용: {e}")
+        # 기존 방식으로 fallback
+        perturbation = eps * torch.randn_like(image_tensor)
+        adv_image = image_tensor + perturbation
+    
+    adv_image = torch.clamp(adv_image, 0, 1)
+    
+    # 가우시안 블러
+    adv_np = adv_image.squeeze(0).detach().cpu().numpy()
+    adv_blur_np = np.stack([gaussian_filter(c, sigma=sigma) for c in adv_np])
+    adv_blur = torch.from_numpy(adv_blur_np).unsqueeze(0)
+```
+<br/>
+
+### **:boom:워터마크 삽입 기능**
+```python
+@app.route('/watermark-insert', methods=['POST'])
+def watermarkInsert():
+    # 1. 이미지와 메시지 받기
+    image_file = request.files.get('image')
+    message = request.form.get('message', 'ETNL')
+    assert len(message) <= 4, "메시지는 4자 이하만 가능"
+    if not image_file or not message:
+        return jsonify({"error": "image, message 둘 다 필요합니다."}), 400
+        
+    # 2. 이미지 로드 및 전처리
+    image = Image.open(image_file.stream).convert("RGB")
+    img_pt = default_transform(image).unsqueeze(0).to(device)
+    
+    # 3. 메시지 전처리
+    wm_bits = ''.join(f"{ord(c):08b}" for c in message)
+    wm_bits = wm_bits.ljust(32, '0')[:32]
+    wm_msg = torch.tensor([[int(bit) for bit in wm_bits]], dtype=torch.float32).to(device)
+    
+    # 3. 워터마크 삽입
+    outputs = wam.embed(img_pt, wm_msg)
+    mask = create_random_mask(img_pt, num_masks=1, mask_percentage=0.5)
+    img_w = outputs['imgs_w'] * mask + img_pt * (1 - mask)
+    
+    # 4. 이미지 후처리 
+    out_img = unnormalize_img(img_w).squeeze(0).detach().clamp_(0, 1)  # 1. 정규화 해제 + 값 범위 제한 (0~1)
+    out_img_np = out_img.permute(1, 2, 0).cpu().numpy()                # 2. CPU로 이동 후 numpy 변환 (HWC 형태)
+    out_img_np = (out_img_np * 255).round().astype('uint8')            # 3. 0~255 범위로 변환 (소수점 처리 개선)
+    out_img_pil = Image.fromarray(out_img_np)
+```
+<br/>
+
+### **:boom:워터마크 탐지 기능**
+```python
+@app.route('/watermark-detection', methods=['POST'])
+def watermarkDetection():
+    # 1. 이미지 수신 및 기본 정보 추출
+    image_file = request.files.get('image')
+    message = request.form.get('message', '')
+    if not image_file or not message:
+        return jsonify({"error": "image, message 둘 다 필요합니다."}), 400
+        
+    # 2. 이미지 전처리
+    image = Image.open(image_file.stream).convert("RGB")
+    img_pt = default_transform(image).unsqueeze(0).to(device)
+    
+    # 3. 워터마크 탐지 (모델 추론)
+    with torch.no_grad():
+        detect_outputs = wam.detect(img_pt)
+        preds = detect_outputs['preds']      # shape: [B, 1+nbits, H, W]
+        mask_preds = preds[:, 0:1, :, :]     # 예측된 마스크
+        bit_preds = preds[:, 1:, :, :]       # 예측된 메시지 비트
+        
+    # 4. 예측된 비트로부터 메시지 추출
+    pred_message = msg_predict_inference(bit_preds, mask_preds)
+    pred_message_float = pred_message.float()  # float32로 변환
+    
+    # 5. 원본 메시지 텐서 변환
+    wm_bits = ''.join(f"{ord(c):08b}" for c in message.ljust(4, '\x00'))[:32]
+    wm_tensor = torch.tensor([int(b) for b in wm_bits], dtype=torch.float32).to(device)
+    
+    # 6. 비트 정확도 계산
+    bit_acc = (pred_message_float == wm_tensor.unsqueeze(0)).float().mean().item()
+    bit_acc_pct = round(bit_acc * 100, 1)
+```
