@@ -157,6 +157,7 @@ while cap.isOpened():
 <br/>
 
 ### **:boom:적대적 노이즈 삽입 기능**
+#### 자동(신뢰도 기반) 또는 정밀(사용자 레벨 선택) 모드로 FGSM 공격 및 Gaussian Blur 후처리를 수행하는 함수입니다.
 
 ```python
 def fgsm_attack_with_blur(image_tensor, base_epsilon=0.015, base_sigma=0.4, mode='auto', level=2):
