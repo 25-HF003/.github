@@ -240,6 +240,7 @@ def fgsm_attack_with_blur(image_tensor, base_epsilon=0.015, base_sigma=0.4, mode
 <br/>
 
 ### **:boom:워터마크 삽입 기능**
+#### 이미지에 32비트 메시지를 삽입해 비가시적 워터마크가 삽입된 이미지를 생성하는 함수입니다.
 ```python
 @app.route('/watermark-insert', methods=['POST'])
 def watermarkInsert():
@@ -273,6 +274,7 @@ def watermarkInsert():
 <br/>
 
 ### **:boom:워터마크 탐지 기능**
+#### 이미지에서 워터마크 메시지를 추출해 원본 메시지와의 비트 일치율(정확도)을 계산하는 함수입니다.
 ```python
 @app.route('/watermark-detection', methods=['POST'])
 def watermarkDetection():
